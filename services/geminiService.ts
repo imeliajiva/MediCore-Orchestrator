@@ -1,11 +1,11 @@
-import { GoogleGenAI, Type, Schema } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 import { AgentType, AgentResponse } from '../types';
 
 const apiKey = process.env.API_KEY || '';
 const ai = new GoogleGenAI({ apiKey });
 
 // Schema definition for the structured output
-const responseSchema: Schema = {
+const responseSchema = {
   type: Type.OBJECT,
   properties: {
     agentType: {
@@ -100,7 +100,10 @@ export const processHospitalRequest = async (prompt: string, imageBase64?: strin
       }
     });
 
-    const jsonText = response.text;
+    let jsonText = response.text || "";
+    // Sanitize markdown if present
+    jsonText = jsonText.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+    
     if (!jsonText) throw new Error("Empty response from AI");
 
     const parsed = JSON.parse(jsonText);
