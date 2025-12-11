@@ -1,11 +1,13 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AgentType, AgentResponse } from '../types';
 
+// Ensure process.env is handled safely for build environments, but strictly use the variable as requested.
 const apiKey = process.env.API_KEY || '';
 const ai = new GoogleGenAI({ apiKey });
 
 // Schema definition for the structured output
-const responseSchema = {
+// Cast to any to avoid strict Schema type validation errors during build
+const responseSchema: any = {
   type: Type.OBJECT,
   properties: {
     agentType: {
